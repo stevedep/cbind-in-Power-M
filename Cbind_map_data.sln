@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{4DF76451-A46A-4C0B-BE03-459FAAFA07E6}") = "Cbind_map_data", "Cbind_map_data\Cbind_map_data.mproj", "{AE8355FF-E600-4502-B2ED-AEED98EEB496}"
+EndProject
+Project("{4DF76451-A46A-4C0B-BE03-459FAAFA07E6}") = "Create set", "Create set\Create set.mproj", "{A7C60777-C6BA-4D10-8C03-CCB32C18F478}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE8355FF-E600-4502-B2ED-AEED98EEB496}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{AE8355FF-E600-4502-B2ED-AEED98EEB496}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{AE8355FF-E600-4502-B2ED-AEED98EEB496}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE8355FF-E600-4502-B2ED-AEED98EEB496}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7C60777-C6BA-4D10-8C03-CCB32C18F478}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7C60777-C6BA-4D10-8C03-CCB32C18F478}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7C60777-C6BA-4D10-8C03-CCB32C18F478}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7C60777-C6BA-4D10-8C03-CCB32C18F478}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {71EB3A5F-B704-4F4F-B317-2E745C4642C5}
+	EndGlobalSection
+EndGlobal
