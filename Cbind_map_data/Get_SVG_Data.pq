@@ -22,6 +22,7 @@
     prefix = Table.TransformColumns(Changed_Type,{{"ColName", each "svg_data_" & _ & "_"}}),
     
     // get the max index per pointset
+
     max = Table.AddColumn(prefix, "m",  each List.Max(_[ap][Index])),
     
     //clear up
