@@ -26,25 +26,48 @@
                                      //       , "Index") // name of the index column
                 }),
     
-    AddRowCountAndPrefix = (listoftables) =>
+    TableBind = (listoftables, prefixvar) =>
         let
-            AddIndex = List.Transform(listoftables, each Table.AddIndexColumn(_,"Index")), //Add Index Key to each datapoint
-            //AddIndexColToTable = Table
+            //Add Index
+                AddIndex = List.Transform(listoftables, each Table.AddIndexColumn(_,"Index")), //Add Index Key to each datapoint
+            
             //first column (original list, holds the XY positions, so we rename this column
-            RenameCol = List.Transform(AddIndex, each Table.RenameColumns(_,{{"Column1", "xy"}})),
-                    //each table with points had a empty record 
-            RemoveExptyRows = List.Transform(RenameCol, each Table.SelectRows(_, each [xy] <> "") ),
-            ToTable = Table.FromList(RemoveExptyRows,Splitter.SplitByNothing()),
+                //RenameCol = List.Transform(AddIndex, each Table.RenameColumns(_,{{"Column1", "xy"}})),
+            //each table with points had a empty record 
+                //RemoveExptyRows = List.Transform(RenameCol, each Table.SelectRows(_, each [xy] <> "") ),
+            ToTable = Table.FromList(AddIndex,Splitter.SplitByNothing()),
             // Name the dataset
-            Added_Index = Table.AddIndexColumn(ToTable, "ColName", 0, 1),
-            Changed_Type = Table.TransformColumnTypes(Added_Index,{{"ColName", type text}}),
-            prefix = Table.TransformColumns(Changed_Type,{{"ColName", each "svg_data_" & _ & "_"}}),
+                Added_Index = Table.AddIndexColumn(ToTable, "ColName", 0, 1),
+                Changed_Type = Table.TransformColumnTypes(Added_Index,{{"ColName", type text}}),
+                prefix = Table.TransformColumns(Changed_Type,{{"ColName", each prefixvar & _ & "_"}}),
     
             // get the max index per pointset
-            max = Table.AddColumn(prefix, "m",  each List.Max(_[Column1][Index])) 
-    in max,
-    Result = AddRowCountAndPrefix(input)
+                max = Table.AddColumn(prefix, "m",  each List.Max(_[Column1][Index])),
+
+           //generate a list that will represent our main column to which we will cbind the others
+                maxofmax = List.Max(max[m]),
+                l = List.Generate(()=>0, each _ < maxofmax, each _ + 1 ),
+                Index_ConvertToTable = Table.FromColumns({l}, 
+                                        type table[ Index = Int64.Type ]),
+    
+           //Convert to Table with our pointsets to a list, also contains the name of the set! (second column)
+                    TableRows = Table.ToRows(max)
+                    , // we will iterate TableRows, to current will reflect to row being interated,
+           //Index_ConvertToTable reflects the first state
+                    JoinTables = List.Accumulate(TableRows,Index_ConvertToTable,(state,current) => 
+                    let
+                        Joined = Table.NestedJoin(state,{"Index"},current{0},{"Index"},"JoinedTableColumn",JoinKind.LeftOuter),
+                        ColumnNames1 = List.Difference(Table.ColumnNames(current{0}),{"Index"}), //All Column names other than index
+                        ColumnNames2 = List.Transform( ColumnNames1, each (current{1}) & _) , //All these columns with a prefix, being the name of the dataset
+                        Expanded = Table.ExpandTableColumn(Joined,"JoinedTableColumn",ColumnNames1, ColumnNames2) //These columns exanded and renames to the prefix name
+                    in
+                        Expanded //The joined dataset becomes the new state.
+                        ),
+                ChangeType = Table.TransformColumnTypes(JoinTables,{{"Index", Int64.Type}}),
+                Sort = Table.Sort(ChangeType,{{"Index", Order.Ascending}})
+    in Sort,
+    Result = TableBind(input, "svg_data_")
 in
   Result
- //Result[Column1]{0}
+ 
    
